@@ -17,5 +17,12 @@ with open("/output/entry.txt", "w", encoding="utf-8") as f:
 
 # Read-back assert: re-open the absolute output path and verify the
 # written file matches LINE exactly — never trust a write without a read.
+# Also check the file's byte size equals the UTF-8 byte length of LINE,
+# so a truncated or padded write fails even if the text compare is skipped.
+import os
+assert os.path.getsize("/output/entry.txt") == len(LINE.encode("utf-8")), (
+    f"entry.txt byte size {os.path.getsize('/output/entry.txt')} "
+    f"!= LINE byte length {len(LINE.encode('utf-8'))}"
+)
 with open("/output/entry.txt", encoding="utf-8") as f:
     assert f.read() == LINE, "entry.txt content does not match LINE"
